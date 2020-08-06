@@ -1,0 +1,4 @@
+applications:
+- name: DataMigrationValidation
+  domains:
+  - apps.wdc-np.itcna.vmware.com
