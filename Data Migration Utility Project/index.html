@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <title>DMVUtility</title>
+  </head>
+  <body>
+    <div class="container" align="center">
+      <h1>Data Migration Utility</h1>
+    </div>
+  </br>
+</br>
+
+<div class="container">
+  <div style="float:left" class="col-xs-5">
+    <fieldset>
+      <legend>
+      <div class="form-group"> 
+          <label for="source">Source DB </label> 
+          <div class="btn-group bootstrap-select show"><select =="" ""="" class="selectpicker" tabindex="-98" data-loadopts="true" data-validate="required" id="Source_DB" name="source"><option value="">Select One</option><option value="Oracle">Oracle</option><option value="Mongo">Mongo </option></select></div>
+      </div> 
+    </br>
+
+            <div class= "input-group-vertical">
+                <input type="text" placeholder="Host" id="SourceHost" width="50%" class="form-control" />
+                <input type="text" placeholder="Port" id="SourcePort" class="form-control" />
+                <input type="text" placeholder="User Name" id="SourceUsername" class="form-control" />
+                <input type="password" placeholder="Password" id="SourcePassword" class="form-control" />
+                <input type="text" placeholder="SID" id="SourceSid" class="form-control" />
+                <input type="text" placeholder="Source Table" id="SourceTable" class="form-control" />
+
+                <!-- <button type="button" onclick="submitform()">Connect....</button> -->
+              </br>
+                <button type="button" onclick="submitform()" class ="btn btn-success">Connect!</button>
+                <button class="btn btn-danger">Disconnect!</button>
+
+            </div>
+            </legend>
+          </br>
+        </fieldset>
+        </div>
+        
+      </br>
+
+          <div style="float:right" class="col-xs-5">  
+            <fieldset>
+         <legend>
+            
+            <div class="form-group"> 
+                    <label for="source">Target DB </label> 
+                    <div class="btn-group bootstrap-select show"><select =="" ""="" class="selectpicker" tabindex="-98" data-loadopts="true" data-validate="required" id="Source_DB" name="source"><option value="">Select One</option><option value="Oracle">Oracle</option><option value="Mongo">Mongo </option></select></div>
+          
+            </div> 
+          </br>
+            <div class= "input-group-vertical">
+                   <input type="text" placeholder="Host" id="TargetHost" class="form-control" width=50%/>
+                   <input type="text" placeholder="Port" id="TargetPort" class="form-control"/>
+                    <input type="text" placeholder="User Name" id="TargetUsername" class="form-control"/>
+                    <input type="password" placeholder="Password" id="TargetPassword" class="form-control"/>
+                    <input type="text" placeholder="SID" id="TargetSid" class="form-control"/>
+                    <input type="text" placeholder="Target Table" id="TargetTable" class="form-control"/>
+                  </br>
+                    <button id ="TargetConnect" class ="btn btn-success">Connect!</button>
+                    <button id="TargetDisconnect" class ="btn btn-danger">Disconnect!</button>
+                    
+              </div>
+              </legend>
+                </fieldset>
+          </div>    
+</div>
+<hr>
+    
+         <ul>
+                Get List of all columns 
+                <a><span class="arrow">&#9660</span></a>
+                  <button type="button" class="btn btn-primary">Submit</button>
+                </br>
+      
+                <ul id="assetNameMenu" type="checkbox">
+                
+                </ul>
+            </ul>
+         <hr>
+         <div>
+          <ul>
+          <a>Transformation Of Data</a>
+        </ul>
+        </div>
+        <hr>
+        <div>
+        <ul>Comapre your data here
+        <button class="btn btn-primary">Compare</button>
+      </ul>
+      </div>
+
+         
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <script>
+
+      function submitform()
+      {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "http://localhost:8090/DMV/connectionSetup", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        // xhr.setRequestHeader("Access-Control-Allow-Origin", "http://localhost:8090")
+        // xhr.setRequestHeader("Access-Control-Allow-Methods","POST")
+        // xhr.setRequestHeader("Access-Control-Allow-Headers","Content-Type")
+
+        var json = {
+             "host" :"ora-dev15-custom-d1.vmware.com",
+            "port" : "1521",
+            "type":"Oracle",
+            "tableName":"SOURCET3",
+            "serviceName":"CUSDEV15",
+            "userName":"XXVMPORTAL",
+            "password":"tfgdsaz4gh"
+          }
+        xhr.send(JSON.stringify(json));
+
+        xhr.addEventListener("readystatechange", processRequest, false);
+
+        function processRequest(e) {
+
+           // console.log(xhr.readyState)
+
+             if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
+              // alert(JSON.stringify(response));
+               //console.log(response.columnNames);
+               populateColumn(response.columnNames);
+                //TODO - assign data to the field
+
+
+
+            }
+        }
+      }
+
+    function populateColumn(response) {
+      console.log(response);
+           var assetList = $('#assetNameMenu')
+        $.each(response, function(i)
+      {
+        var li = $('<li/>')
+            .addClass('ui-menu-item')
+            .attr('role', 'menuitem')
+            .appendTo(assetList);
+        var aaa = $('<a/>')
+            .addClass('ui-all')
+            .text(response[i])
+            .appendTo(li);
+         var a =  $('<input/>')
+            .addClass('ui-all')
+            .attr('role', 'input')
+            .appendTo(aaa);
+        var input = $('<input/>')
+            .addClass('ui-all')
+            .attr('type', 'checkbox')
+            .appendTo(aaa);
+  });
+}
+
+
+//var countries = ['United States', 'Canada', 'Argentina', 'Armenia'];
+   
+  
+  
+     
+    </script>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+   <!-- <script src="/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>-->
+<!--<script src="/js/custom.js"crossorigin="anonymous"></script> -->
+</body>
+</html>
